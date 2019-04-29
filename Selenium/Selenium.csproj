@@ -54,7 +54,7 @@
     <Compile Include="PageObjects\Application.cs" />
     <Compile Include="PageObjects\GoogleMainPage.cs" />
     <Compile Include="PageObjects\WebPage.cs" />
-    <Compile Include="Tests\TestFrameworkStability.cs" />
+    <Compile Include="Tests\FrameworkStabilityTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebDriverWrapper\WebDriver.cs" />
     <Compile Include="WebElementWrapper\WebElement.cs" />

@@ -6,7 +6,7 @@ using Selenium.PageObjects;
 namespace Selenium
 {
     [TestFixture]
-    public class TestFrameworkStability
+    public class FrameworkStabilityTests
     {
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -15,7 +15,7 @@ namespace Selenium
         }
 
         [Test]
-        public void TestFramework()
+        public void SmokeTest()
         {
             Application.GooglePage.VirtualKeyboardBtn.JSMouseOver();
             Assert.IsTrue(Application.GooglePage.VirtualKeyboardToolTip.Displayed);
