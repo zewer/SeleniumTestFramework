@@ -1,4 +1,5 @@
 ﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.Generic;
@@ -14,8 +15,12 @@ namespace Selenium.WebElementWrapper
 
         private By by;
         private int timeout = WebDriver.DefaultTimeout;
-        private IWebElement element;
         private Exception lastException;
+
+        /// <summary>
+        /// Get element for any unwrapped operations, like Actions, etc.
+        /// </summary>
+        public IWebElement Element { get; private set; }
 
         public bool Displayed
         {
@@ -26,7 +31,7 @@ namespace Selenium.WebElementWrapper
                 {
                     try
                     {
-                        return element.Displayed;
+                        return Element.Displayed;
                     }
                     catch (Exception ex)
                     {
@@ -47,7 +52,7 @@ namespace Selenium.WebElementWrapper
                 {
                     try
                     {
-                        return element.Enabled;
+                        return Element.Enabled;
                     }
                     catch (Exception ex)
                     {
@@ -68,7 +73,7 @@ namespace Selenium.WebElementWrapper
                 {
                     try
                     {
-                        return element.Text;
+                        return Element.Text;
                     }
                     catch (Exception ex)
                     {
@@ -97,7 +102,7 @@ namespace Selenium.WebElementWrapper
             {
                 try
                 {
-                    element = driver.FindElement(by);
+                    Element = driver.FindElement(by);
                     return;
                 }
                 catch (Exception ex)
@@ -109,6 +114,7 @@ namespace Selenium.WebElementWrapper
             throw lastException;
         }
 
+        #region Selenium operations
         /// <summary>
         /// Execute click to an element.
         /// </summary>
@@ -119,7 +125,7 @@ namespace Selenium.WebElementWrapper
             {
                 try
                 {
-                    element.Click();
+                    Element.Click();
                     return;
                 }
                 catch (Exception ex)
@@ -137,7 +143,7 @@ namespace Selenium.WebElementWrapper
         }
 
         /// <summary>
-        /// Sendkeys to an element
+        /// Sendkeys to an element.
         /// </summary>
         /// <param name="keysToBeSend">Text to be send</param>
         /// <param name="deletePrevText">Delete previous text - true/false</param>
@@ -150,9 +156,9 @@ namespace Selenium.WebElementWrapper
                 {
                     if (deletePrevText)
                     {
-                        element.SendKeys(Keys.Control + "a");
+                        Element.SendKeys(Keys.Control + "a");
                     }
-                    element.SendKeys(keysToBeSend);
+                    Element.SendKeys(keysToBeSend);
                     return;
                 }
                 catch (Exception ex)
@@ -164,11 +170,47 @@ namespace Selenium.WebElementWrapper
                         InitElement();
                         continue;
                     }
+                    lastException = ex;
                     throw;
                 }
             }
+            throw lastException;
         }
 
+        /// <summary>
+        /// Delete all information from text.
+        /// </summary>
+        public void Clear()
+        {
+            var endDate = DateTime.Now.AddSeconds(timeout);
+            while (endDate > DateTime.Now)
+            {
+                try
+                {
+                    Element.Clear();
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    if (ex is StaleElementReferenceException ||
+                        ex is ElementNotVisibleException ||
+                        ex is InvalidElementStateException)
+                    {
+                        InitElement();
+                        continue;
+                    }
+                    lastException = ex;
+                    throw;
+                }
+            }
+            throw lastException;
+        }
+
+        /// <summary>
+        /// Get element's attribute 
+        /// </summary>
+        /// <param name="attributeName">Attribute name</param>
+        /// <returns></returns>
         public string GetAttribute(string attributeName)
         {
             var endDate = DateTime.Now.AddSeconds(timeout);
@@ -176,7 +218,7 @@ namespace Selenium.WebElementWrapper
             {
                 try
                 {
-                    return element.GetAttribute(attributeName);
+                    return Element.GetAttribute(attributeName);
                 }
                 catch (Exception ex)
                 {
@@ -193,13 +235,81 @@ namespace Selenium.WebElementWrapper
         }
 
         /// <summary>
-        /// Scroll to element
+        /// Get element's Css attribute .
+        /// </summary>
+        /// <param name="attributeName">Css attribute name</param>
+        /// <returns></returns>
+        public string GetCssValue(string attributeName)
+        {
+            var endDate = DateTime.Now.AddSeconds(timeout);
+            while (endDate > DateTime.Now)
+            {
+                try
+                {
+                    return Element.GetCssValue(attributeName);
+                }
+                catch (Exception ex)
+                {
+                    lastException = ex;
+                    if (ex is StaleElementReferenceException)
+                    {
+                        InitElement();
+                        continue;
+                    }
+                    throw;
+                }
+            }
+            throw lastException;
+        }
+
+        /// <summary>
+        /// Execute Submit operation to an element.
+        /// </summary>
+        public void Submit()
+        {
+            var endDate = DateTime.Now.AddSeconds(timeout);
+            while (endDate > DateTime.Now)
+            {
+                try
+                {
+                    Element.Submit();
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    lastException = ex;
+                    if (ex is StaleElementReferenceException)
+                    {
+                        InitElement();
+                        continue;
+                    }
+                    throw;
+                }
+            }
+            throw lastException;
+        }
+        #endregion
+
+        #region JS Operations
+        /// <summary>
+        /// Scroll to element.
         /// </summary>
         /// <param name="scrollIntoView">true/false</param>
         public void ScrollIntoView(bool scrollIntoView = true)
         {
             var until = scrollIntoView.ToString().ToLower();
             string commandToExecute = $"arguments[0].scrollIntoView({until});";
+            ExecuteJS(commandToExecute);
+        }
+
+        /// <summary>
+        /// Scroll page by x and y offset
+        /// </summary>
+        /// <param name="x">X offset</param>
+        /// <param name="y">Y offset</param>
+        public void ScrollBy(int x, int y)
+        {
+            string commandToExecute = $"window.scrollBy({x},{y});";
             ExecuteJS(commandToExecute);
         }
 
@@ -267,7 +377,7 @@ namespace Selenium.WebElementWrapper
                 try
                 {
                     var executor = driver as IJavaScriptExecutor;
-                    executor.ExecuteScript($"{commandToExecute}", element);
+                    executor.ExecuteScript($"{commandToExecute}", Element);
                     return;
                 }
                 catch (Exception ex)
@@ -279,5 +389,6 @@ namespace Selenium.WebElementWrapper
             }
             throw lastException;
         }
+        #endregion
     }
 }

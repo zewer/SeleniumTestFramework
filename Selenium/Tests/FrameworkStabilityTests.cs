@@ -24,17 +24,12 @@ namespace Selenium
             Application.GooglePage.SearchBtn.Click();
             Assert.IsTrue(Application.GooglePage.SearchFld.GetAttribute("value") == "search123");
 
+            Application.GooglePage.NavigationTbl.ScrollBy(0, 200);
             Application.GooglePage.NavigationTbl.ScrollIntoView();
             Assert.IsTrue(Application.GooglePage.NavigationTbl.Displayed);
 
             Application.GooglePage.Page7lbl.JSMouseClick();
             Assert.IsTrue(Application.GooglePage.Page7SelectedLbl.Displayed);
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            WebDriver.NavigateTo("https://google.com");
         }
 
         [OneTimeTearDown]
