@@ -4,11 +4,6 @@ using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using Selenium.PageObjects;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Selenium
 {
@@ -64,7 +59,7 @@ namespace Selenium
         {
             if (driver == null)
             {
-                throw new Exception("Browser is not opened. Use OpenBrowser() method first");
+                throw new NullReferenceException("Browser is not opened. Use OpenBrowser() method first");
             }
 
             T page = new T();
@@ -77,6 +72,7 @@ namespace Selenium
 
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(DefaultTimeout);
             driver.Manage().Window.Maximize();
+            (driver as IJavaScriptExecutor).ExecuteScript("window.focus();");
             page.Document = driver;
 
             return page;
@@ -116,8 +112,7 @@ namespace Selenium
         /// <returns></returns>
         private static bool LoadPage()
         {
-            var executor = driver as IJavaScriptExecutor;
-            return wait.Until(d => executor.ExecuteScript("return document.readyState") as string == "complete");
+            return wait.Until(d => (d as IJavaScriptExecutor).ExecuteScript("return document.readyState") as string == "complete");
         }
 
         /// <summary>
@@ -129,8 +124,10 @@ namespace Selenium
             {
                 Quit();
             }
-            BrowserType = BrowserTypes.Chrome;
-            // TO DO - get expected browser
+
+            // TO DO - extract expected browser type.
+            BrowserType = GetBrowser();
+
             if (BrowserType == BrowserTypes.Chrome)
             {
                 ChromeOptions options = new ChromeOptions();
@@ -143,26 +140,32 @@ namespace Selenium
         }
 
         /// <summary>
+        /// Get browser type.
+        /// </summary>
+        /// <returns></returns>
+        private static BrowserTypes GetBrowser()
+        {
+            return BrowserTypes.Chrome;
+        }
+
+        /// <summary>
         /// Wait until Ajax page is loading
         /// </summary>
         /// <param name="driver"></param>
         /// <returns></returns>
-        private static bool WaitForAjax(this IWebDriver driver)
+        private static bool LoadAjax()
         {
-            var ajaxIsComplete = false;
-            try
-            {
-                while (!ajaxIsComplete)
-                {
-                    ajaxIsComplete = (bool)(driver as IJavaScriptExecutor).ExecuteScript("return jQuery.active == 0");
-                }
-            }
-            catch (TimeoutException e)
-            {
-                Console.Error.WriteLine(e.Message + "Error waiting for ajax");
-            }
+            return ExecuteCondition(d => (d as IJavaScriptExecutor).ExecuteScript("return jQuery.active") as string == "0");
+        }
 
-            return true;
+        /// <summary>
+        /// Execute condition
+        /// </summary>
+        /// <param name="conditionToExecute">Condition to be executed</param>
+        /// <returns></returns>
+        private static bool ExecuteCondition(Func<IWebDriver, bool> conditionToExecute)
+        {
+            return wait.Until(conditionToExecute);
         }
 
         /// <summary>
@@ -179,6 +182,75 @@ namespace Selenium
         public static void NavigateTo(string url)
         {
             driver.Navigate().GoToUrl(url);
+        }
+
+        /// <summary>
+        /// Test method to generate Alert window in browser.
+        /// </summary>
+        /// <param name="text">Text to be added to the Alert</param>
+        public static void CreateAlert(string text)
+        {
+            (driver as IJavaScriptExecutor).ExecuteScript($"alert('{text}');");
+        }
+
+        /// <summary>
+        /// Switch to Alert and extract it's text
+        /// </summary>
+        /// <param name="accept"></param>
+        /// <returns></returns>
+        public static string GetAlertText(bool accept = true)
+        {
+            return HandleAlert(accept);
+        }
+
+        /// <summary>
+        /// Switch to Alert and accept it
+        /// </summary>
+        public static void AcceptAlert()
+        {
+            HandleAlert(true);
+        }
+
+        /// <summary>
+        /// Switch to Alert and close it
+        /// </summary>
+        public static void DismissAlert()
+        {
+            HandleAlert(false);
+        }
+
+        /// <summary>
+        /// Base method to handle Alert from browser.
+        /// </summary>
+        /// <param name="accept">Accept/Decline alert</param>
+        /// <returns></returns>
+        private static string HandleAlert(bool accept)
+        {
+            string alertText = string.Empty;
+            var endDate = DateTime.Now.AddSeconds(DefaultTimeout);
+
+            while (endDate > DateTime.Now)
+            {
+                try
+                {
+                    var alert = driver.SwitchTo().Alert();
+                    alertText = alert.Text;
+                    if (accept)
+                    {
+                        alert.Accept();
+                    }
+                    else
+                    {
+                        alert.Dismiss();
+                    }
+                }
+                catch (NoAlertPresentException)
+                {
+                    continue;
+                }
+                break;
+            }
+            return alertText;
         }
 
         /// <summary>

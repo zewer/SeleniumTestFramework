@@ -1,16 +1,10 @@
-﻿using OpenQA.Selenium;
-using Selenium.WebElementWrapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Selenium.WebElementWrapper;
 
 namespace Selenium.PageObjects
 {
     public class GooglePage : WebPage
     {
-        public override int? Timeout { get; set; } = 120;
+        public override int? Timeout { get; set; } = 10;
 
         public WebElement SearchFld => Document.GetElementByXPath("//*[@title='Пошук']");
 

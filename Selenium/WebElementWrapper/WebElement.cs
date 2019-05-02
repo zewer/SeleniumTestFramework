@@ -1,11 +1,6 @@
 ﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 
 namespace Selenium.WebElementWrapper
 {
@@ -130,6 +125,7 @@ namespace Selenium.WebElementWrapper
                 }
                 catch (Exception ex)
                 {
+                    lastException = ex;
                     if (ex is StaleElementReferenceException || 
                         ex is ElementNotVisibleException ||
                         ex is ElementClickInterceptedException)
@@ -140,6 +136,7 @@ namespace Selenium.WebElementWrapper
                     throw;
                 }
             }
+            throw lastException;
         }
 
         /// <summary>
@@ -163,6 +160,7 @@ namespace Selenium.WebElementWrapper
                 }
                 catch (Exception ex)
                 {
+                    lastException = ex;
                     if (ex is StaleElementReferenceException ||
                         ex is ElementNotVisibleException ||
                         ex is InvalidElementStateException)
@@ -170,7 +168,6 @@ namespace Selenium.WebElementWrapper
                         InitElement();
                         continue;
                     }
-                    lastException = ex;
                     throw;
                 }
             }
@@ -192,6 +189,7 @@ namespace Selenium.WebElementWrapper
                 }
                 catch (Exception ex)
                 {
+                    lastException = ex;
                     if (ex is StaleElementReferenceException ||
                         ex is ElementNotVisibleException ||
                         ex is InvalidElementStateException)
@@ -199,7 +197,6 @@ namespace Selenium.WebElementWrapper
                         InitElement();
                         continue;
                     }
-                    lastException = ex;
                     throw;
                 }
             }
@@ -309,8 +306,7 @@ namespace Selenium.WebElementWrapper
         /// <param name="y">Y offset</param>
         public void ScrollBy(int x, int y)
         {
-            string commandToExecute = $"window.scrollBy({x},{y});";
-            ExecuteJS(commandToExecute);
+            ExecuteJS($"window.scrollBy({x},{y});");
         }
 
         /// <summary>
@@ -319,6 +315,24 @@ namespace Selenium.WebElementWrapper
         public void JSClick()
         {
             ExecuteJS("arguments[0].click();");
+        }
+
+        /// <summary>
+        /// Set text to element via JS
+        /// </summary>
+        /// <param name="testToBeSend"></param>
+        public void JSSendKeys(string testToBeSend)
+        {
+            ExecuteJS($"arguments[0].value = '{testToBeSend}'");
+        }
+
+        /// <summary>
+        /// Delete all text from element
+        /// </summary>
+        /// <param name="testToBeSend"></param>
+        public void JSClear()
+        {
+            ExecuteJS($"arguments[0].value = ''");
         }
 
         /// <summary>
@@ -358,9 +372,9 @@ namespace Selenium.WebElementWrapper
         [Obsolete("Depricated. Use 'ExecuteMouseEvent' instead")]
         private void InitMouseEvent(string mouseEvent)
         {
-            string commandToExecute = "var evt = document.createEvent('MouseEvents');" + 
-            $"evt.initMouseEvent('{mouseEvent.ToString()}', true, true, window, 0, 0, 0, 80, 20, false, false, false, false, 0, null);" +
-            "element.dispatchEvent(evt);";
+            string commandToExecute = "var event = document.createEvent('MouseEvents');" + 
+            $"event.initMouseEvent('{mouseEvent.ToString()}', true, true, window, 0, 0, 0, 80, 20, false, false, false, false, 0, null);" +
+            "element.dispatchEvent(event);";
 
             ExecuteJS(commandToExecute);
         }
@@ -368,8 +382,8 @@ namespace Selenium.WebElementWrapper
         /// <summary>
         /// Execute JS to an element.
         /// </summary>
-        /// <param name="commandToExecute"></param>
-        public void ExecuteJS(string commandToExecute)
+        /// <param name="commandToExecute">Command to be executed</param>
+        private void ExecuteJS(string commandToExecute)
         {
             var endDate = DateTime.Now.AddSeconds(timeout);
             while (endDate > DateTime.Now)

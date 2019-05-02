@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Selenium.PageObjects;
 
 namespace Selenium
@@ -20,6 +18,12 @@ namespace Selenium
             Application.GooglePage.VirtualKeyboardBtn.JSMouseOver();
             Assert.IsTrue(Application.GooglePage.VirtualKeyboardToolTip.Displayed);
 
+            Application.GooglePage.SearchFld.JSSendKeys("search321");
+            Assert.IsTrue(Application.GooglePage.SearchFld.GetAttribute("value") == "search321");
+
+            Application.GooglePage.SearchFld.JSClear();
+            Assert.IsTrue(Application.GooglePage.SearchFld.GetAttribute("value") == string.Empty);
+
             Application.GooglePage.SearchFld.SendKeys("search123");
             Application.GooglePage.SearchBtn.Click();
             Assert.IsTrue(Application.GooglePage.SearchFld.GetAttribute("value") == "search123");
@@ -30,6 +34,9 @@ namespace Selenium
 
             Application.GooglePage.Page7lbl.JSMouseClick();
             Assert.IsTrue(Application.GooglePage.Page7SelectedLbl.Displayed);
+
+            WebDriver.CreateAlert("Alert: Hi!");
+            Assert.IsTrue(WebDriver.GetAlertText(true) == "Alert: Hi!");
         }
 
         [OneTimeTearDown]
