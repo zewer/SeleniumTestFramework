@@ -74,7 +74,7 @@ namespace Selenium
 
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(DefaultTimeout);
             driver.Manage().Window.Maximize();
-            (driver as IJavaScriptExecutor).ExecuteScript("window.focus();");
+            BringBrowserToFront();
             page.Document = driver;
 
             return page;
@@ -139,7 +139,8 @@ namespace Selenium
                 driver = new ChromeDriver(chromeDriverPath, options);
             }
             NavigateTo(url);
-            BringBrowserToFront("Google - Google Chrome");
+            //BringBrowserToFront("Google - Google Chrome");
+            BringBrowserToFront();
             driver.Manage().Window.Maximize();
         }
 
@@ -210,11 +211,10 @@ namespace Selenium
         /// <summary>
         /// Bring browser window to front.
         /// </summary>
-        /// <param name="windowName">Window name</param>
         /// <returns></returns>
-        public static bool BringBrowserToFront(string windowName)
+        public static bool BringBrowserToFront()
         {
-            return DesktopUtils.BringApplicationToFront(windowName);
+            return DesktopUtils.BringApplicationToFront($"{driver.Title} - Google Chrome");
         }
 
         /// <summary>
