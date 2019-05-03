@@ -56,6 +56,7 @@
     <Compile Include="PageObjects\WebPage.cs" />
     <Compile Include="Tests\FrameworkStabilityTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\DesktopUtils.cs" />
     <Compile Include="WebDriverWrapper\WebDriver.cs" />
     <Compile Include="WebElementWrapper\WebElement.cs" />
     <Compile Include="WebElementWrapper\WebElementFactory.cs" />

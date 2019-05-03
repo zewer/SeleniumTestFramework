@@ -3,7 +3,9 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using Selenium.PageObjects;
+using Selenium.Utils;
 using System;
+using System.IO;
 
 namespace Selenium
 {
@@ -132,10 +134,12 @@ namespace Selenium
             {
                 ChromeOptions options = new ChromeOptions();
                 options.AddArgument("--disable-extensions");
-
-                driver = new ChromeDriver(@"C:\Users\Zewer\Desktop\Selenium\packages", options);
+                var currentPath = DesktopUtils.GetCurrentPath() + "\\";
+                var chromeDriverPath = Path.GetFullPath(currentPath + "..\\..\\packages");
+                driver = new ChromeDriver(chromeDriverPath, options);
             }
             NavigateTo(url);
+            BringBrowserToFront("Google - Google Chrome");
             driver.Manage().Window.Maximize();
         }
 
@@ -201,6 +205,16 @@ namespace Selenium
         public static string GetAlertText(bool accept = true)
         {
             return HandleAlert(accept);
+        }
+
+        /// <summary>
+        /// Bring browser window to front.
+        /// </summary>
+        /// <param name="windowName">Window name</param>
+        /// <returns></returns>
+        public static bool BringBrowserToFront(string windowName)
+        {
+            return DesktopUtils.BringApplicationToFront(windowName);
         }
 
         /// <summary>
