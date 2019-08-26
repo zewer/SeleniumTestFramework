@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using Selenium.PageObjects;
+using System;
+using System.Reflection;
 
 namespace Selenium
 {
@@ -15,25 +17,25 @@ namespace Selenium
         [Test]
         public void SmokeTest()
         {
-            Application.GooglePage.VirtualKeyboardBtn.JSMouseOver();
-            Assert.IsTrue(Application.GooglePage.VirtualKeyboardToolTip.Displayed);
+            Pages.GooglePage.VirtualKeyboardBtn.JSMouseOver();
+            Assert.IsTrue(Pages.GooglePage.VirtualKeyboardToolTip.Displayed);
 
-            Application.GooglePage.SearchFld.JSSendKeys("search321");
-            Assert.IsTrue(Application.GooglePage.SearchFld.GetAttribute("value") == "search321");
+            Pages.GooglePage.SearchFld.JSSendKeys("search321");
+            Assert.IsTrue(Pages.GooglePage.SearchFld.GetAttribute("value") == "search321");
 
-            Application.GooglePage.SearchFld.JSClear();
-            Assert.IsTrue(Application.GooglePage.SearchFld.GetAttribute("value") == string.Empty);
+            Pages.GooglePage.SearchFld.JSClear();
+            Assert.IsTrue(Pages.GooglePage.SearchFld.GetAttribute("value") == string.Empty);
 
-            Application.GooglePage.SearchFld.SendKeys("search123");
-            Application.GooglePage.SearchBtn.Click();
-            Assert.IsTrue(Application.GooglePage.SearchFld.GetAttribute("value") == "search123");
+            Pages.GooglePage.SearchFld.SendKeys("search123");
+            Pages.GooglePage.SearchBtn.Click();
+            Assert.IsTrue(Pages.GooglePage.SearchFld.GetAttribute("value") == "search123");
 
-            Application.GooglePage.NavigationTbl.ScrollBy(0, 200);
-            Application.GooglePage.NavigationTbl.ScrollIntoView();
-            Assert.IsTrue(Application.GooglePage.NavigationTbl.Displayed);
+            Pages.GooglePage.NavigationTbl.ScrollBy(0, 200);
+            Pages.GooglePage.NavigationTbl.ScrollIntoView();
+            Assert.IsTrue(Pages.GooglePage.NavigationTbl.Displayed);
 
-            Application.GooglePage.Page7lbl.JSMouseClick();
-            Assert.IsTrue(Application.GooglePage.Page7SelectedLbl.Displayed);
+            Pages.GooglePage.Page7lbl.JSMouseClick();
+            Assert.IsTrue(Pages.GooglePage.Page7SelectedLbl.Displayed);
 
             WebDriver.CreateAlert("Alert: Hi!");
             Assert.IsTrue(WebDriver.GetAlertText(true) == "Alert: Hi!");

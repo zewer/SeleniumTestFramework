@@ -31,6 +31,7 @@ namespace Selenium.WebElementWrapper
                     catch (Exception ex)
                     {
                         lastException = ex;
+                        InitElement();
                         continue;
                     }
                 }
@@ -52,6 +53,7 @@ namespace Selenium.WebElementWrapper
                     catch (Exception ex)
                     {
                         lastException = ex;
+                        InitElement();
                         continue;
                     }
                 }
@@ -73,6 +75,7 @@ namespace Selenium.WebElementWrapper
                     catch (Exception ex)
                     {
                         lastException = ex;
+                        InitElement();
                         continue;
                     }
                 }
@@ -284,6 +287,16 @@ namespace Selenium.WebElementWrapper
                 }
             }
             throw lastException;
+        }
+
+        /// <summary>
+        /// Find new element from existing
+        /// </summary>
+        /// <param name="by">Locator to be searched for</param>
+        /// <returns>new WebElement</returns>
+        public WebElement FindElement(By by)
+        {
+            return new WebElement(driver, by) { Element = Element.FindElement(by) };
         }
         #endregion
 

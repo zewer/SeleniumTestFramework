@@ -51,7 +51,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PageObjects\Application.cs" />
+    <Compile Include="PageObjects\Pages.cs" />
     <Compile Include="PageObjects\GoogleMainPage.cs" />
     <Compile Include="PageObjects\WebPage.cs" />
     <Compile Include="Tests\FrameworkStabilityTests.cs" />

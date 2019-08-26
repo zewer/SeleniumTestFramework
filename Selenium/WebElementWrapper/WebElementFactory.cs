@@ -19,11 +19,5 @@ namespace Selenium.WebElementWrapper
         {
             return new WebElement(driver, by);
         }
-
-        public static WebElement GetElements(this RemoteWebDriver driver, By by)
-        {
-            // TO DO
-            return new WebElement(driver, by);
-        }
     }
 }

@@ -69,7 +69,7 @@ namespace Selenium
             {
                 DefaultTimeout = page.Timeout.Value;
             }
-            wait = new WebDriverWait(driver, default);
+            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(DefaultTimeout));
             TryLoadPage();
 
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(DefaultTimeout);

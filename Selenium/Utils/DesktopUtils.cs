@@ -41,7 +41,7 @@ namespace Selenium.Utils
         }
 
         /// <summary>
-        /// Get current executing path
+        /// Get current execution path
         /// </summary>
         /// <returns></returns>
         public static string GetCurrentPath()
