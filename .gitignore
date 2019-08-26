@@ -340,7 +340,7 @@ ASALocalRun/
 healthchecksdb
 
 # Screenshots
-[Ss]creenshots/
+*.jpeg
 
 # Test results
-[Tt]estExecutionResults/
+*.html
