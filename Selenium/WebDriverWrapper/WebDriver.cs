@@ -134,9 +134,8 @@ namespace Selenium
             {
                 ChromeOptions options = new ChromeOptions();
                 options.AddArgument("--disable-extensions");
-                var currentPath = DesktopUtils.GetCurrentPath() + "\\";
-                var chromeDriverPath = Path.GetFullPath(currentPath + "..\\..\\packages");
-                driver = new ChromeDriver(chromeDriverPath, options);
+
+                driver = new ChromeDriver(DesktopUtils.GetDebugFolderPath(), options);
             }
             NavigateTo(url);
             //BringBrowserToFront("Google - Google Chrome");

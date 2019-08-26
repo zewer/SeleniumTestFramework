@@ -44,9 +44,27 @@ namespace Selenium.Utils
         /// Get current execution path
         /// </summary>
         /// <returns></returns>
-        public static string GetCurrentPath()
+        public static string GetDebugFolderPath()
         {
             return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        }
+
+        /// <summary>
+        /// Get current project folder path
+        /// </summary>
+        /// <returns></returns>
+        public static string GetProjectFolderPath()
+        {
+            return GetDebugFolderPath().Replace("\\bin\\Debug", "");
+        }
+
+        /// <summary>
+        /// Get Screenshot folder path
+        /// </summary>
+        /// <returns></returns>
+        public static string GetScreenshotFolderPath()
+        {
+            return GetProjectFolderPath() + "\\Screenshots";
         }
     }
 }

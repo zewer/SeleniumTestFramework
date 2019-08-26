@@ -1,19 +1,12 @@
 ﻿using NUnit.Framework;
 using Selenium.PageObjects;
-using System;
-using System.Reflection;
+using Selenium.Tests;
 
 namespace Selenium
 {
     [TestFixture]
-    public class FrameworkStabilityTests
+    public class FrameworkStabilityTests : BaseTests
     {
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
-            WebDriver.OpenBrowser("https://google.com");
-        }
-
         [Test]
         public void SmokeTest()
         {
@@ -41,10 +34,12 @@ namespace Selenium
             Assert.IsTrue(WebDriver.GetAlertText(true) == "Alert: Hi!");
         }
 
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
+        [Test]
+        public void TestToVerifyScreenshot()
         {
-            WebDriver.Quit();
+            Pages.GooglePage.SearchFld.SendKeys("Test1");
+
+            Assert.IsTrue(false);
         }
     }
 }
