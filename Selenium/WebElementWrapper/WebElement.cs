@@ -4,6 +4,9 @@ using System;
 
 namespace Selenium.WebElementWrapper
 {
+    /// <summary>
+    /// Webelement's wrapper
+    /// </summary>
     public class WebElement
     {
         private RemoteWebDriver driver;
@@ -313,7 +316,7 @@ namespace Selenium.WebElementWrapper
         }
 
         /// <summary>
-        /// Scroll page by x and y offset
+        /// Scroll page to x/y
         /// </summary>
         /// <param name="x">X offset</param>
         /// <param name="y">Y offset</param>
@@ -340,9 +343,8 @@ namespace Selenium.WebElementWrapper
         }
 
         /// <summary>
-        /// Delete all text from element
+        /// Clear element's text
         /// </summary>
-        /// <param name="testToBeSend"></param>
         public void JSClear()
         {
             ExecuteJS($"arguments[0].value = ''");
